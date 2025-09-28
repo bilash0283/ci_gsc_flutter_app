@@ -1,211 +1,189 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
-  runApp(const CarGameApp());
+  runApp(const BilashPortfolio());
 }
 
-class CarGameApp extends StatelessWidget {
-  const CarGameApp({super.key});
+class BilashPortfolio extends StatelessWidget {
+  const BilashPortfolio({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Bilash Portfolio',
       debugShowCheckedModeBanner: false,
-      home: const CarGamePage(),
+      home: const PortfolioPage(),
     );
   }
 }
 
-class CarGamePage extends StatefulWidget {
-  const CarGamePage({super.key});
+class PortfolioPage extends StatelessWidget {
+  const PortfolioPage({super.key});
 
-  @override
-  State<CarGamePage> createState() => _CarGamePageState();
-}
-
-class _CarGamePageState extends State<CarGamePage> with SingleTickerProviderStateMixin {
-  double carX = 0; 
-  late AnimationController _controller;
-  double roadOffset = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 50))
-      ..addListener(() {
-        setState(() {
-          roadOffset += 10;
-          if (roadOffset > 40) roadOffset = 0;
-        });
-      })
-      ..repeat();
+  void _launchURL(String url) async {
+    if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
   }
 
-  void moveLeft() {
-    setState(() {
-      carX -= 0.1;
-      if (carX < -0.8) carX = -0.8;
-    });
-  }
-
-  void moveRight() {
-    setState(() {
-      carX += 0.1;
-      if (carX > 0.8) carX = 0.8;
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  Widget roadLine(double top) {
-    return Positioned(
-      top: top - roadOffset,
-      left: MediaQuery.of(context).size.width / 2 - 5,
-      child: Container(
-        width: 10,
-        height: 40,
-        color: Colors.white,
+  Widget sectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Text(
+        '🔹 $title',
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
+    );
+  }
+
+  Widget buildText(String text, {double fontSize = 16}) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: fontSize),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
-      backgroundColor: Colors.grey[800],
-      body: Stack(
-        children: [
-          Positioned(
-            left: 10,
-            top: 100,
-            child: Container(
-              width: 70,
-              height: 150,
-              decoration: BoxDecoration(
-                color: Colors.brown[700],
-                border: Border.all(color: Colors.black, width: 2),
-                borderRadius: BorderRadius.circular(8),
+      appBar: AppBar(
+        title: const Text("Bilash Portfolio"),
+        centerTitle: true,
+        backgroundColor: Colors.blue,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Profile Section
+            Center(
+              child: Column(
+                children: [
+                  const CircleAvatar(
+                    radius: 60,
+                    backgroundImage: NetworkImage('https://bilash.ci-gsc.com/images/user-image.png'),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Bilash Kumar Mondol',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  const Text('Web Developer'),
+                  const SizedBox(height: 10),
+                  const Text('Merul Badda, Dhaka'),
+                  const Text('+8801705-372439'),
+                  const Text('bilash0283@gmail.com'),
+                  TextButton(
+                    onPressed: () => _launchURL('https://github.com/bilash0283'),
+                    child: const Text('GitHub Profile'),
+                  ),
+                  TextButton(
+                    onPressed: () => _launchURL('https://bilash.ci-gsc.com'),
+                    child: const Text('Live Portfolio Site'),
+                  ),
+                ],
               ),
-              child: const Center(child: Text('Building', style: TextStyle(color: Colors.white))),
             ),
-          ),
-          Positioned(
-            left: 10,
-            top: 300,
-            child: Container(
-              width: 70,
-              height: 150,
-              decoration: BoxDecoration(
-                color: Colors.brown[600],
-                border: Border.all(color: Colors.black, width: 2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Center(child: Text('Building', style: TextStyle(color: Colors.white))),
-            ),
-          ),
 
-          // ডান পাশে বিল্ডিং গুলো
-          Positioned(
-            right: 10,
-            top: 150,
-            child: Container(
-              width: 70,
-              height: 150,
-              decoration: BoxDecoration(
-                color: Colors.brown[700],
-                border: Border.all(color: Colors.black, width: 2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Center(child: Text('Building', style: TextStyle(color: Colors.white))),
+            // Summary
+            sectionTitle('SUMMARY'),
+            buildText(
+              'A motivated and detail-oriented Web Developer with strong skills in PHP (Laravel), JavaScript, MySQL, ReactJS, Bootstrap, Tailwind CSS, WordPress, and Flutter.',
             ),
-          ),
-          Positioned(
-            right: 10,
-            top: 350,
-            child: Container(
-              width: 70,
-              height: 150,
-              decoration: BoxDecoration(
-                color: Colors.brown[600],
-                border: Border.all(color: Colors.black, width: 2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Center(child: Text('Building', style: TextStyle(color: Colors.white))),
-            ),
-          ),
 
-          // রাস্তার দুই পাশের সাদা লাইন
-          Positioned(
-            left: screenWidth / 2 - 100,
-            top: 0,
-            bottom: 0,
-            child: Container(
-              width: 10,
-              color: Colors.white,
-            ),
-          ),
-          Positioned(
-            left: screenWidth / 2 + 90,
-            top: 0,
-            bottom: 0,
-            child: Container(
-              width: 10,
-              color: Colors.white,
-            ),
-          ),
+            // Education
+            sectionTitle('EDUCATION'),
+            buildText('🎓 Diploma in Computer Engineering (4 Years)'),
+            buildText('Naogaon Polytechnic Institute, Naogaon'),
+            buildText('Board: BTEB | Year: 2021 | GPA: 3.72 / 4.00'),
+            const SizedBox(height: 8),
+            buildText('🎓 SSC - Kaligram Dodangi High School'),
+            buildText('Board: Rajshahi | Year: 2017 | GPA: 4.91 / 5.00'),
 
-          // রাস্তার মাঝখানে ড্যাশড লাইন (move করবে)
-          for (double i = 0; i < screenHeight; i += 80)
-            roadLine(i),
+            // Work Experience
+            sectionTitle('WORK EXPERIENCE'),
+            buildText('📌 Web Developer – GSC (Nov 2024 – Present)'),
+            buildText('Developing and maintaining web apps using PHP, Laravel, JavaScript.'),
+            const SizedBox(height: 8),
+            buildText('📌 PRAN-RFL Group (Oct 2023 – May 2024)'),
+            buildText('Managed customer relationships, sales, distribution, product promotion.'),
+            const SizedBox(height: 8),
+            buildText('📌 Growth Apparel Ltd. (Jul 2022 – Jul 2023)'),
+            buildText('Managed inventory and supported supply chain operations.'),
+            const SizedBox(height: 8),
+            buildText('📌 Ananta Huaxing Ltd. (Feb 2017 – Dec 2019)'),
+            buildText('Handled computer operations and supported public service.'),
 
-          // গাড়ি
-          Align(
-            alignment: Alignment(carX, 0.7),
-            child: SizedBox(
-              width: 80,
-              height: 150,
-              child: Image.network(
-                'https://cdn-icons-png.flaticon.com/512/743/743922.png',
-                fit: BoxFit.contain,
-              ),
+            // Projects
+            sectionTitle('PROFESSIONAL PROJECTS'),
+            buildText('📁 Portfolio'),
+            TextButton(
+              onPressed: () => _launchURL('https://bilash.ci-gsc.com'),
+              child: const Text('Live Link'),
             ),
-          ),
+            TextButton(
+              onPressed: () => _launchURL('https://github.com/bilash0283/Portfolio_2025'),
+              child: const Text('GitHub Repo'),
+            ),
+            const SizedBox(height: 8),
+            buildText('📁 GSC'),
+            TextButton(
+              onPressed: () => _launchURL('https://www.gsc.co.com'),
+              child: const Text('Live Link'),
+            ),
+            TextButton(
+              onPressed: () => _launchURL('https://github.com/bilash0283/gsc.co.com_fontend'),
+              child: const Text('GitHub Repo'),
+            ),
+            const SizedBox(height: 8),
+            buildText('📁 GSC - Portal'),
+            TextButton(
+              onPressed: () => _launchURL('https://ci-gsc.com/'),
+              child: const Text('Live Link'),
+            ),
+            TextButton(
+              onPressed: () => _launchURL('https://github.com/bilash0283/Protal_GSC'),
+              child: const Text('GitHub Repo'),
+            ),
+            const SizedBox(height: 8),
+            buildText('📁 Foodies'),
+            TextButton(
+              onPressed: () => _launchURL('https://foodiesappbd.netlify.app/'),
+              child: const Text('Live Link'),
+            ),
+            TextButton(
+              onPressed: () => _launchURL('https://github.com/bilash0283/foodies'),
+              child: const Text('GitHub Repo'),
+            ),
 
-          // নিচে control buttons
-          Positioned(
-            bottom: 30,
-            left: 50,
-            child: ElevatedButton(
-              onPressed: moveLeft,
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(20),
-                backgroundColor: Colors.black54,
-              ),
-              child: const Icon(Icons.arrow_left, size: 40),
-            ),
-          ),
-          Positioned(
-            bottom: 30,
-            right: 50,
-            child: ElevatedButton(
-              onPressed: moveRight,
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(20),
-                backgroundColor: Colors.black54,
-              ),
-              child: const Icon(Icons.arrow_right, size: 40),
-            ),
-          ),
-        ],
+            // Technical Skills
+            sectionTitle('TECHNICAL SKILLS'),
+            buildText('Frontend: HTML, CSS, JavaScript, Bootstrap, Tailwind CSS, jQuery, ReactJS (Basic)'),
+            buildText('Backend: PHP, Laravel, Flutter'),
+            buildText('Database: MySQL, Firebase'),
+            buildText('CMS: WordPress, GitHub'),
+
+            // Training
+            sectionTitle('ADDITIONAL INFORMATION'),
+            buildText('💡 Microsoft Office – TTC Naogaon (6 Months)'),
+            buildText('💡 Web App Development – LEDP (200 Hours)'),
+            buildText('💡 Flutter App Development – Freelancing IT Office (6 Months)'),
+
+            // Personal Info
+            sectionTitle('PERSONAL DETAILS'),
+            buildText('Full Name: Bilash Kumar Mondol'),
+            buildText("Father's Name: Anil Chandra Mondol"),
+            buildText("Mother's Name: Joyanti Rani Mondol"),
+            buildText("Date of Birth: 01 July 2000"),
+            buildText('District: Naogaon'),
+            buildText('Religion: Hinduism'),
+            buildText('Gender: Male'),
+            buildText('Marital Status: Single'),
+            buildText('Nationality: Bangladeshi'),
+          ],
+        ),
       ),
     );
   }
