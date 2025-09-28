@@ -61,9 +61,9 @@ class PortfolioPage extends StatelessWidget {
             Center(
               child: Column(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 60,
-                    backgroundImage: NetworkImage('https://bilash.ci-gsc.com/images/user-image.png'),
+                    backgroundImage: AssetImage('web/icons/icon_bk.png'),
                   ),
                   const SizedBox(height: 10),
                   const Text(
